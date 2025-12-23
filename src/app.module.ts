@@ -7,6 +7,8 @@ import { UserModule } from './user/user.module';
 import { DatabaseModule } from './database/database.module';
 import { PostsModule } from './posts/posts.module';
 import { CoursesModule } from './courses/courses.module';
+import { SubjectsModule } from './subjects/subjects.module';
+import { SubjectEnrollmentsModule } from './subject-enrollments/subject-enrollments.module';
 
 @Module({
   imports: [
@@ -20,7 +22,7 @@ import { CoursesModule } from './courses/courses.module';
     }),
     DatabaseModule, // 👈 only once
 
-    UserModule, PostsModule, CoursesModule,
+    UserModule, PostsModule, CoursesModule, SubjectsModule, SubjectEnrollmentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
