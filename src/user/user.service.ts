@@ -9,11 +9,15 @@ import { InjectModel } from '@nestjs/mongoose';
 // import { User } from './user.schema';
 import { isValidObjectId, Model, Types } from 'mongoose';
 import { User } from 'src/database/schemas/user.schema';
+import { Course } from 'src/database/schemas/course.schema';
+import { CoursesService } from 'src/courses/courses.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
+    // @InjectModel(Course.name) private readonly courseModel: Model<Course>
+    private readonly courseService: CoursesService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -43,9 +47,9 @@ export class UserService {
       .find()
       .populate('posts', 'title content')
       .populate({
-    path: 'courses',
-    model: 'Course', // 👈 force model
-  }) // 👈 converts IDs → course objects
+        path: 'courses',
+        model: 'Course', // 👈 force model
+      }) // 👈 converts IDs → course objects
       .lean({ virtuals: true });
 
     // return this.userModel.aggregate([
@@ -99,5 +103,53 @@ export class UserService {
     }
 
     return { message: 'User deleted successfully' };
+  }
+
+  async enrollUser(userId: string, courseId: string) {
+    await this.findOne(userId);
+    await this.courseService.findOne(courseId);
+    // await this.userModel.findByIdAndUpdate(userId, {
+    //   $addToSet: { courses: courseId },
+    // });
+
+    // await this.courseModel.findByIdAndUpdate(courseId, {
+    //   $addToSet: { students: userId },
+    // });
+
+    const updatedAssigneduser = await this.userModel.updateOne(
+      { _id: userId },
+      { $addToSet: { courses: courseId } },
+    );
+
+    // await this.userModel.updateOne(
+    //   { _id: userId },
+    //   {
+    //     $addToSet: {
+    //       courses: { $each: courseIds }, // for multiple assignment 👈 IMPORTANT
+    //     },
+    //   },
+    // );
+
+    return updatedAssigneduser;
+  }
+
+  async deassign(userId: string, courseId: string) {
+    // const { userId, courseId } = dto;
+
+    await this.userModel.updateOne(
+      { _id: userId },
+      { $pull: { courses: courseId } }, // 👈 KEY
+    );
+
+    // await this.userModel.updateOne(
+    //   { _id: userId },
+    //   {
+    //     $pull: {
+    //       courses: { $in: courseIds }, // multiple de assignment IMPORTANT
+    //     },
+    //   },
+    // );
+
+    return { message: 'Course de-assigned successfully' };
   }
 }
