@@ -30,6 +30,58 @@
 #       - name: Build project
 #         run: pnpm build
 
+
+
+
+
+# name: Backend CI Pipeline
+
+# on:
+#   push:
+#     branches:
+#       - stage
+#       - main
+#   pull_request:
+#     branches:
+#       - stage
+#       - main
+
+# jobs:
+#   build:
+#     name: Build & Validate Backend
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       # 1️⃣ Checkout repository
+#       - name: Checkout code
+#         uses: actions/checkout@v4
+
+#       # 2️⃣ Setup Node.js
+#       - name: Setup Node.js
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: 20
+#           cache: 'pnpm'
+
+#       # 3️⃣ Setup pnpm
+#       - name: Setup pnpm
+#         uses: pnpm/action-setup@v3
+#         with:
+#           version: 9
+
+#       # 4️⃣ Install dependencies
+#       - name: Install dependencies
+#         run: pnpm install --frozen-lockfile
+
+#       # 5️⃣ Build NestJS app
+#       - name: Build application
+#         run: pnpm build
+
+
+
+
+
+
 name: Backend CI Pipeline
 
 on:
@@ -48,7 +100,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout repository
+      # 1️⃣ Checkout
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -57,13 +109,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
 
-      # 3️⃣ Setup pnpm
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: 9
+      # 3️⃣ Enable pnpm via Corepack
+      - name: Enable pnpm
+        run: corepack enable
 
       # 4️⃣ Install dependencies
       - name: Install dependencies
