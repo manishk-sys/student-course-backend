@@ -6,10 +6,12 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { SubjectEnrollmentsService } from './subject-enrollments.service';
 import { CreateSubjectEnrollmentDto } from './dto/create-subject-enrollment.dto';
 import { UpdateSubjectEnrollmentDto } from './dto/update-subject-enrollment.dto';
+import { ApiQuery } from '@nestjs/swagger';
 
 @Controller('subject-enrollments')
 export class SubjectEnrollmentsController {
@@ -22,9 +24,16 @@ export class SubjectEnrollmentsController {
     return this.subjectEnrollmentsService.create(createSubjectEnrollmentDto);
   }
 
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiQuery({ name: 'raw', required: false, type: Boolean })
   @Get()
-  findAll() {
-    return this.subjectEnrollmentsService.findAll();
+  findAll(
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+    @Query('raw') raw?: boolean,
+  ) {
+    return this.subjectEnrollmentsService.findAll({ page, limit, raw });
   }
 
   @Get(':id')

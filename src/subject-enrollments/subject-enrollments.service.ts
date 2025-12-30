@@ -38,12 +38,549 @@ export class SubjectEnrollmentsService {
       ...createSubjectEnrollmentDto,
       studentId: new Types.ObjectId(createSubjectEnrollmentDto.studentId),
       subjectId: new Types.ObjectId(createSubjectEnrollmentDto.subjectId),
-      enrolledAt: new Date(),
+      enrolledAt: createSubjectEnrollmentDto?.enrolledAt ?? new Date(),
     });
   }
 
-  async findAll() {
-    return await this.enrollmentModel.find();
+  async findAll({ page, limit, raw }) {
+    if (raw == true) {
+      console.log(
+        'rawrawrawraw-------------------------------------------------',
+        raw,
+      );
+      return await this.enrollmentModel.find();
+    } else {
+      return await this.enrollmentModel.aggregate([
+        // {
+        //   $lookup: {
+        //     from: 'subjects',
+        //     localField: 'subjectId',
+        //     foreignField: '_id',
+        //     as: 'subject',
+        //   },
+        // },
+        // { $unwind: '$subject' },
+        // {
+        //   $group: {
+        //     _id: '$studentId',
+        //     totalSubjects: {
+        //       $sum: 1,
+        //     },
+        //     totalCreditsOfAllSubjects: {
+        //       $sum: '$subject.credits',
+        //     },
+        //   },
+        // },
+
+        // {
+        //   $group:{
+        //     _id:'$studentId',
+        //     subjectIds:{
+        //       $push:'$subjectId'
+        //     }
+        //   }
+        // }
+
+        // {
+        //   $group:{
+        //     _id:'$studentId',
+        //     uniqueSubjects:{
+        //       $addToSet:'$subjectId'
+        //     }
+        //   }
+        // }
+
+        // { $match: { status: 'active' } },
+        // {
+        //   $group: {
+        //     _id: '$studentId',
+        //     activeSubjects: {
+        //       $push: '$subjectId',
+        //     },
+        //   },
+        // },
+
+        // {
+        //   $lookup: {
+        //     from: 'subjects',
+        //     localField: 'subjectId',
+        //     foreignField: '_id',
+        //     as: 'Subject',
+        //   },
+        // },
+        // {
+        //   $unwind: '$Subject',
+        // },
+
+        // {
+        //   $sort: { enrolledAt: 1 },
+        // },
+        // {
+        //   $group: {
+        //     _id: '$studentId',
+
+        //     firstEnrollment: {
+        //       $first: {
+        //         enrolledAt: '$enrolledAt',
+        //         subject: '$Subject',
+        //       },
+        //     },
+
+        //     lastEnrollment: {
+        //       $last: {
+        //         enrolledAt: '$enrolledAt',
+        //         subject: '$Subject',
+        //       },
+        //     },
+        //   },
+        // },
+
+        // {
+        //   $group:{
+        //     _id:null,
+        //     totalEnrollment:{
+        //       $sum:1
+        //     },
+        //     uniqueStudents:{
+        //       $addToSet:'$studentId'
+        //     },
+        //     uniqueSubjects:{
+        //       $addToSet:'$subjectId'
+        //     }
+        //   }
+        // }
+
+        // {
+        //   $lookup: {
+        //     from: 'subjects',
+        //     localField: 'subjectId',
+        //     foreignField: '_id',
+        //     as: 'Subject',
+        //   },
+        // },
+        // { $unwind: '$Subject' },
+        // {
+        //   $project: {
+        //     _id: 1,
+        //     studentId: 1,
+        //     'Subject.title': 1,
+        //     'Subject.credits': 1,
+        //   },
+        // },
+
+        // {
+        //   $group: {
+        //     _id: '$studentId',
+        //     subjects: {
+        //       $addToSet: '$Subject',
+        //     },
+        //   },
+        // },
+
+        // {
+        //   $group: {
+        //     _id: '$studentId',
+        //     activeEnrollment: {
+        //       $sum: {
+        //         $cond: [{ $eq: ['$status', 'active'] }, 1, 0],
+        //       },
+        //     },
+        //     droppedEnrollment: {
+        //       $sum: {
+        //         $cond: [{ $eq: ['$status', 'dropped'] }, 1, 0],
+        //       },
+        //     },
+        //   },
+        // },
+
+        // {
+        //   $group: {
+        //     _id: {
+        //       studentId: '$studentId',
+        //       status: '$status',
+        //     },
+        //     count: { $sum: 1 },
+        //   },
+        // },
+        // {
+        //   $group: {
+        //     _id: '$_id.studentId',
+        //     counts: {
+        //       $push: {
+        //         status: '$_id.status',
+        //         count: '$count',
+        //       },
+        //     },
+        //   },
+        // },
+
+        // {
+        //   $group:{
+        //     _id:'$studentId',
+        //     totalSubjectEnrolled:{
+        //       $sum:1
+        //     }
+        //   }
+        // },
+        // {
+        //   $match:{totalSubjectEnrolled:{$gt:1}}
+        // }
+
+        // {
+        //   $group: {
+        //     _id: '$enrolledAt',
+        //     totalEnrolled: {
+        //       $sum: 1,
+        //     }
+        //   },
+        // },
+        // {
+        //   $project:{
+        //     _id:0,
+        //     enrolledAt:'$_id',
+        //     totalEnrolled:1
+        //   }
+        // }
+
+        // {
+        //   $group: {
+        //     _id: {
+        //       studentId: '$studentId',
+        //       enrolledDate: '$enrolledAt',
+        //     },
+        //     count: {
+        //       $sum: 1,
+        //     },
+        //   },
+        // },
+        // {
+        //   $group: {
+        //     _id: '$_id.studentId',
+        //     isRepeat: {
+        //       $max: {
+        //         $cond: [{ $gt: ['$count', 1] }, true, false],
+        //       },
+        //     },
+        //     enrollDate: {
+        //       // $push:'$_id.enrolledDate'
+        //       $push: {
+        //         $cond: [
+        //           { $gt: ['$count', 1] },
+        //           '$_id.enrolledDate',
+        //           '$$REMOVE',
+        //         ],
+        //       },
+        //     },
+        //   },
+        // },
+
+        // {
+        //   $lookup: {
+        //     from: 'subjects',
+        //     localField: 'subjectId',
+        //     foreignField: '_id',
+        //     as: 'subject',
+        //   },
+        // },
+        // { $unwind: '$subject' },
+        // {
+        //   $group: {
+        //     _id: '$studentId',
+        //     subjects: {
+        //       $addToSet: '$subject.title',
+        //     },
+        //   },
+        // },
+        // {
+        //   $addFields: {
+        //     totalSubject: { $size: '$subjects' },
+        //   },
+        // },
+
+        // {
+        //   $lookup: {
+        //     from: 'users',
+        //     localField: 'studentId',
+        //     foreignField: '_id',
+        //     as: 'Student',
+        //   },
+        // },
+        // { $unwind: '$Student' },
+        // {
+        //   $group: {
+        //     _id: '$studentId',
+        //     enrollCount: {
+        //       $sum: 1,
+        //     },
+        //     student:{
+        //       $first:'$Student'
+        //     }
+        //   },
+        // },
+        // {
+        //   $sort: {
+        //     enrollCount: -1,
+        //   },
+        // },
+
+        // {
+        //   $lookup: {
+        //     from: 'subjects',
+        //     localField: 'subjectId',
+        //     foreignField: '_id',
+        //     as: 'Subject',
+        //   },
+        // },
+        // { $unwind: '$Subject' },
+        // {
+        //   $group: {
+        //     _id: '$subjectId',
+        //     totalStudent: {
+        //       $sum: 1,
+        //     },
+        //     subject: {
+        //       $first: '$Subject',
+        //     },
+        //   },
+        // },
+        // {
+        //   $sort: {
+        //     totalStudent: -1,
+        //   },
+        // },
+        // {
+        //   $limit: 1,
+        // },
+
+        // {
+        //   $group: {
+        //     _id: '$subjectId',
+        //     totalStudent: { $sum: 1 },
+        //   },
+        // },
+        // {
+        //   $sort: { totalStudent: -1 },
+        // },
+        // {
+        //   $limit: 1,
+        // },
+        // {
+        //   $lookup: {
+        //     from: 'subjects',
+        //     localField: '_id', // 👈 use _id
+        //     foreignField: '_id',
+        //     as: 'subject',
+        //   },
+        // },
+        // { $unwind: '$subject' },
+
+        // {
+        //   $sortByCount: '$subjectId',
+        // },
+        // {
+        //   $limit: 1,
+        // },
+        // {
+        //   $lookup: {
+        //     from: 'subjects',
+        //     localField: '_id',
+        //     foreignField: '_id',
+        //     as: 'subject',
+        //   },
+        // },
+        // { $unwind: '$subject' },
+
+        // {
+        //   $sortByCount: '$studentId',
+        // },
+
+        // {
+        //   $group: {
+        //     _id: '$subjectId',
+        //     totalStudent: { $sum: 1 },
+        //   },
+        // },
+        // {
+        //   $group: {
+        //     _id: null,
+        //     maxCount: { $max: '$totalStudent' },
+        //     subjects: { $push: '$$ROOT' },
+        //   },
+        // },
+        // {
+        //   $unwind: '$subjects',
+        // },
+        // {
+        //   $match: {
+        //     $expr: { $eq: ['$subjects.totalStudent', '$maxCount'] },
+        //   },
+        // },
+        // {
+        //   $lookup: {
+        //     from: 'subjects',
+        //     localField: 'subjects._id',
+        //     foreignField: '_id',
+        //     as: 'subject',
+        //   },
+        // },
+        // { $unwind: '$subject' },
+
+        // {
+        //   $group: {
+        //     _id: '$subjectId',
+        //     totalStudents: {
+        //       $sum: 1,
+        //     },
+        //   },
+        // },
+        // {
+        //   $group:{
+        //     _id:null,
+        //     maxi:{
+        //       $sum:'$totalStudents'
+        //     },
+        //     studentsz:{
+        //       $push:'$$ROOT'
+        //     }
+        //   }
+        // }
+
+        // {
+        //   $group: {
+        //     _id: {
+        //       studentId: '$studentId',
+        //       subjectId: '$subjectId',
+        //     },
+
+        //     count:{
+        //       $sum:1
+        //     }
+        //   },
+        // },
+        // {
+        //   $match:{
+        //     count:{
+        //       $gt:1
+        //     }
+        //   }
+        // }
+
+        // {
+        //   $group: {
+        //     _id: '$studentId',
+        //     timeline: {
+        //       $push: {
+        //         subjectId: '$subjectId',
+        //         date: '$enrolledAt',
+        //       },
+        //     },
+        //   },
+        // },
+
+        // {
+        //   $lookup: {
+        //     from: 'users',
+        //     localField: 'studentId',
+        //     foreignField: '_id',
+        //     as: 'StudentInfo',
+        //   },
+        // },
+        // { $unwind: '$StudentInfo' },
+        // {
+        //   $lookup: {
+        //     from: 'subjects',
+        //     localField: 'subjectId',
+        //     foreignField: '_id',
+        //     as: 'Subject',
+        //   },
+        // },
+        // { $unwind: '$Subject' },
+        // {
+        //   $group: {
+        //     _id: '$studentId',
+        //     UniqueSubjects: {
+        //       $addToSet: '$Subject',
+        //     },
+        //     totalSubject: {
+        //       $sum: 1,
+        //     },
+        //     totalCredits: {
+        //       $sum: '$Subject.credits',
+        //     },
+        //     firstEnrollment: {
+        //       $min: '$enrolledAt',
+        //     },
+        //     lastEnrollment: {
+        //       $max: '$enrolledAt',
+        //     },
+        //   },
+        // },
+
+        // {
+        //   $setWindowFields: {
+        //     partitionBy: '$studentId',
+        //     sortBy: { enrolledAt: 1 },
+        //     output: {
+        //       runningCount: { $count: {} },
+        //     },
+        //   },
+        // },
+
+        // {
+        //   $bucket: {
+        //     groupBy: '$enrolledAt',
+        //     boundaries: [
+        //       new Date('2025-12-23T00:00:00Z'),
+        //       new Date('2025-12-24T00:00:00Z'),
+        //       new Date('2025-12-25T00:00:00Z'),
+        //     ],
+        //     default: 'After 24 Dec',
+        //     output: {
+        //       totalEnrollments: { $sum: 1 },
+        //       students: { $addToSet: '$studentId' },
+        //     },
+        //   },
+        // },
+
+        // {
+        //   $bucketAuto: {
+        //     groupBy: '$enrolledAt',
+        //     buckets: 3,
+        //     output: {
+        //       totalEnrollments: { $sum: 1 },
+        //       uniqueStudents: { $addToSet: '$studentId' },
+        //     },
+        //   },
+        // },
+
+        // {
+        //   $group: {
+        //     _id: '$studentId',
+        //     enrollmentCount: { $sum: 1 },
+        //   },
+        // },
+        // {
+        //   $bucketAuto: {
+        //     groupBy: '$enrollmentCount',
+        //     buckets: 4,
+        //     output: {
+        //       students: { $sum: 1 },
+        //     },
+        //   },
+        // },
+        // {
+        //   $bucket:{
+        //     groupBy:'$enrollmentCount',
+        //     boundaries:[1,2,3],
+        //     default:'after 2 count',
+        //     output:{
+        //       student:{$sum:1},
+
+        //     }
+        //   }
+        // }
+      ]);
+    }
   }
 
   async findOne(id: string) {
@@ -201,7 +738,7 @@ export class SubjectEnrollmentsService {
       {
         $project: {
           subject: 1,
-          studentId:1,
+          studentId: 1,
           _id: 0,
         },
       },

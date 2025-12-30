@@ -1,6 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsDateString, IsMongoId, IsOptional } from 'class-validator';
 
+
+export enum EnrollmentStatus {
+  ACTIVE = 'active',
+  DROPPED = 'dropped',
+}
 export class CreateSubjectEnrollmentDto {
   @ApiProperty({
     description: 'MongoDB ID of the student',
@@ -18,11 +23,20 @@ export class CreateSubjectEnrollmentDto {
 
   @ApiProperty({
     description: 'Enrollment date',
-    example: '2025-01-15T10:30:00.000Z',
+    example: '2025-01-15T00:00:00.000Z',
     type: String,
     format: 'date-time',
   })
   @IsDateString()
   @IsOptional()
   enrolledAt?: Date;
+
+  @ApiProperty({
+    enum:EnrollmentStatus,
+    description: 'Assignment Status',
+    example: 'Active',
+    default:EnrollmentStatus.ACTIVE
+  })
+  @IsOptional()
+  status?:EnrollmentStatus
 }

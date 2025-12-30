@@ -57,4 +57,9 @@ export class UserController {
       enrollmentDto?.courseId,
     );
   }
+
+  @Get('dashboard/student/:id')
+  dashboard(@Param('id') id: string) {
+    return this.userService.dashboard(id);
+  }
 }
