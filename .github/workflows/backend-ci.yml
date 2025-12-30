@@ -1,31 +1,74 @@
-name: Backend CI
+# name: Backend CI
+
+# on:
+#   push:
+#     branches:
+#       - main
+#   pull_request:
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v4
+
+#       - name: Setup Node.js
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: 20
+
+#       - name: Setup pnpm
+#         uses: pnpm/action-setup@v3
+#         with:
+#           version: 9
+
+#       - name: Install dependencies
+#         run: pnpm install
+
+#       - name: Build project
+#         run: pnpm build
+
+name: Backend CI Pipeline
 
 on:
   push:
     branches:
+      - stage
       - main
   pull_request:
+    branches:
+      - stage
+      - main
 
 jobs:
   build:
+    name: Build & Validate Backend
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Checkout repository
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # 2️⃣ Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'pnpm'
 
+      # 3️⃣ Setup pnpm
       - name: Setup pnpm
         uses: pnpm/action-setup@v3
         with:
           version: 9
 
+      # 4️⃣ Install dependencies
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
-      - name: Build project
+      # 5️⃣ Build NestJS app
+      - name: Build application
         run: pnpm build
