@@ -17,7 +17,7 @@ async function bootstrap() {
 
   // ✅ Swagger config
   const config = new DocumentBuilder()
-    .setTitle('User API')
+    .setTitle('User Course Learning API')
     .setDescription('NestJS + MongoDB API documentation')
     .setVersion('1.0')
     .addBearerAuth() // for future JWT
@@ -26,6 +26,8 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
 
-  await app.listen(process.env.PORT ?? 4004);
+  const port = process.env.PORT || 3000
+  await app.listen(port);
+   console.log(`🚀 App running on port ${port}`)
 }
 bootstrap();
